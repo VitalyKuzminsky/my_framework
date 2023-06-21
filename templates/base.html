@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    {% block style %}{% endblock %}
+</head>
+
+<body>
+  <div id="main">
+    <div id="header">
+      <div id="logo">
+        <div id="logo_text">
+          <!-- class="logo_colour", allows you to change the colour of the text -->
+          <h1>
+            <a href="index">Мой<span class="logo_colour">&nbsp;сайт</span></a>
+          </h1>
+          <h2>Black &amp; White Website Template.</h2>
+        </div>
+      </div>
+      {% block menu %}{% endblock %}
+    </div>
+
+    <div id="site_content">
+      {% block sidebar %}{% endblock %}
+      {% block body %}{% endblock %}
+    </div>
+
+    <div id="content_footer"></div>
+    {% block footer %}{% endblock %}
+  </div>
+</body>
+</html>

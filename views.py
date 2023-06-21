@@ -11,3 +11,8 @@ class Index:
 class Contact:
     def __call__(self, request):
         return '200 OK', render('contact.html', date=request.get('date', None))
+
+
+class AboutUs:
+    def __call__(self, request):
+        return '200 OK', render('about_us.html', date=request.get('date', None))

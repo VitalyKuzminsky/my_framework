@@ -1,5 +1,5 @@
 from datetime import date
-from views import Index, Contact
+from views import Index, Contact, AboutUs
 
 
 # Реализация Front controller
@@ -19,4 +19,6 @@ routes = {
     '/': Index(),
     '/index/': Index(),
     '/contact/': Contact(),
+    '/about_us/': AboutUs(),
+
 }
