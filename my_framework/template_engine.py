@@ -1,5 +1,6 @@
 from jinja2 import FileSystemLoader
 from jinja2.environment import Environment
+from jinja2 import runtime
 
 
 def render(template_name, folder='templates', **kwargs):

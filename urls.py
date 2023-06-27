@@ -1,5 +1,6 @@
 from datetime import date
-from views import Index, Contact, AboutUs
+from views import Index, Contact, AboutUs, Bakery, PiesList, \
+    CreatePie, CreateCategory, CategoryList, CopyPie
 
 
 # Реализация Front controller
@@ -20,5 +21,10 @@ routes = {
     '/index/': Index(),
     '/contact/': Contact(),
     '/about_us/': AboutUs(),
-
+    '/bakery/': Bakery(),
+    '/pies_list/': PiesList(),
+    '/create_pie/': CreatePie(),
+    '/create_category/': CreateCategory(),
+    '/category_list/': CategoryList(),
+    '/copy_pie/': CopyPie(),
 }

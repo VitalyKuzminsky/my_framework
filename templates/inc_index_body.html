@@ -1,13 +1,25 @@
 <div id="content">
     <!-- insert the page content here -->
-    <h1>Заголовок Н1</h1>
-    <p>Пример текста. Вот ссылка <a href="#">http://мой.сайт</a>.</p>
-    <p>Выделение <strong>жирным</strong>.</p>
-    <h2>Заголовок Н2</h2>
-    <p>Пример списка:</p>
-    <ul>
-        <li>Internet Explorer 8</li>
-        <li>FireFox 3</li>
-        <li>Google Chrome 13</li>
-    </ul>
+<!--    <h1>Мой проект.</h1>-->
+<!--    <p><strong>Сайт для курса "Архитектура и шаблоны проектирования на Python"</strong>.</p>-->
+<!--    <p>Ссылка для входа в <a href="bakery">Пирожковую</a>.</p>-->
+<!--    <h2>Заголовок Н2</h2>-->
+<!--    <p>Пример списка:</p>-->
+<!--    <ul>-->
+<!--        <li>Internet Explorer 8</li>-->
+<!--        <li>FireFox 3</li>-->
+<!--        <li>Google Chrome 13</li>-->
+<!--    </ul>-->
+    <div>
+		<a href="create_category">Создать новую категорию</a>
+	</div>
+	<div>
+		<h1>Список существующих категорий</h1>
+        {% for item in objects_list %}
+        <li>
+            {{item.name}} <span>Количество курсов: {{item.pie_count()}}</span>
+			<a href="/pies_list/?id={{item.id}}">Показать курсы</a>
+        </li>
+        {% endfor %}
+	</div>
 </div>
