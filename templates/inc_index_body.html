@@ -17,8 +17,8 @@
 		<h1>Список существующих категорий</h1>
         {% for item in objects_list %}
         <li>
-            {{item.name}} <span>Количество курсов: {{item.pie_count()}}</span>
-			<a href="/pies_list/?id={{item.id}}">Показать курсы</a>
+            {{item.name}} <span>Количество пирожков: {{item.pie_count()}}</span>
+			<a href="/pies_list/?id={{item.id}}">Показать пирожки</a>
         </li>
         {% endfor %}
 	</div>

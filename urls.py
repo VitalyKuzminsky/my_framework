@@ -16,15 +16,16 @@ def front_2(request):
 fronts = [front_1, front_2]
 
 # Словарь урлов и какие контроллеры по ним будут отрабатывать.
-routes = {
-    '/': Index(),
-    '/index/': Index(),
-    '/contact/': Contact(),
-    '/about_us/': AboutUs(),
-    '/bakery/': Bakery(),
-    '/pies_list/': PiesList(),
-    '/create_pie/': CreatePie(),
-    '/create_category/': CreateCategory(),
-    '/category_list/': CategoryList(),
-    '/copy_pie/': CopyPie(),
-}
+# c 5 урока больше не нужен, теперь routes во views, наполняется декоратором
+# routes = {
+#     '/': Index(),
+#     '/index/': Index(),
+#     '/contact/': Contact(),
+#     '/about_us/': AboutUs(),
+#     '/bakery/': Bakery(),
+#     '/pies_list/': PiesList(),
+#     '/create_pie/': CreatePie(),
+#     '/create_category/': CreateCategory(),
+#     '/category_list/': CategoryList(),
+#     '/copy_pie/': CopyPie(),
+# }

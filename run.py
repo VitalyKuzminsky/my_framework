@@ -2,7 +2,10 @@
 
 from wsgiref.simple_server import make_server
 from my_framework.main import MyFramework
-from urls import routes, fronts
+from urls import fronts
+from views import routes
+
+# from urls import routes  # импорт с 5 урока не нужен
 
 application = MyFramework(routes, fronts)
 

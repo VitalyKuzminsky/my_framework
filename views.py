@@ -3,42 +3,58 @@
 from datetime import date
 from my_framework.template_engine import render
 from patterns.сreational_patterns import Engine, Logger
+from patterns.structural_patterns import AppRoute, Debug
+
 
 site = Engine()
 logger = Logger('main')
 
+routes = {}  # Пустой словарь, который будет заполнять декоратор при открытии проекта
+
 
 # Главная страница
+@AppRoute(routes=routes, url='/')
 class Index:
+    @Debug(name='Index')
     def __call__(self, request):
-        return '200 OK', render('index.html', date=request.get('date', None))
+        # return '200 OK', render('index.html', date=request.get('date', None))
+        return '200 OK', render('index.html', objects_list=site.categories)
 
 
 # Контакты
+@AppRoute(routes=routes, url='/contact/')
 class Contact:
     def __call__(self, request):
-        return '200 OK', render('contact.html', date=request.get('date', None))
+        # return '200 OK', render('contact.html', date=request.get('date', None))
+        return '200 OK', render('contact.html')
 
 
 # О проекте
+@AppRoute(routes=routes, url='/about_us/')
 class AboutUs:
+    @Debug(name='AboutUs')
     def __call__(self, request):
-        return '200 OK', render('about_us.html', date=request.get('date', None))
+        # return '200 OK', render('about_us.html', date=request.get('date', None))
+        return '200 OK', render('about_us.html')
 
 
 # Ошибка 404
 class NotFound404:
+    @Debug(name='NotFound404')
     def __call__(self, request):
         return '404 WHAT', '404 Page not found'
 
 
 # Пирожковая
+@AppRoute(routes=routes, url='/bakery/')
 class Bakery:
+    @Debug(name='Bakery')
     def __call__(self, request):
-        return '200 OK', render('bakery.html', date=date.today())
+        return '200 OK', render('bakery.html', objects_list=site.categories, date=date.today())
 
 
 # Список пирожков
+@AppRoute(routes=routes, url='/pies_list/')
 class PiesList:
     def __call__(self, request):
         logger.log('Список пирожков')
@@ -53,6 +69,7 @@ class PiesList:
 
 
 # Создать пирожок
+@AppRoute(routes=routes, url='/create_pie/')
 class CreatePie:
     category_id = -1
 
@@ -89,6 +106,7 @@ class CreatePie:
 
 
 # Создание категории
+@AppRoute(routes=routes, url='/create_category/')
 class CreateCategory:
     def __call__(self, request):
 
@@ -119,6 +137,7 @@ class CreateCategory:
 
 
 # контроллер - список категорий
+@AppRoute(routes=routes, url='/category_list/')
 class CategoryList:
     def __call__(self, request):
         logger.log('Список категорий')
@@ -127,6 +146,7 @@ class CategoryList:
 
 
 # Копировать пирожок
+@AppRoute(routes=routes, url='/copy_pie/')
 class CopyPie:
     def __call__(self, request):
         request_params = request['request_params']
