@@ -1,6 +1,6 @@
 from datetime import date
-from views import Index, Contact, AboutUs, Bakery, PiesList, \
-    CreatePie, CreateCategory, CategoryList, CopyPie
+# from views import Index, Contact, AboutUs, Bakery, PiesList, \
+#     CreatePie, CreateCategory, CategoryList, CopyPie
 
 
 # Реализация Front controller

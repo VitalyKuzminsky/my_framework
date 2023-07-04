@@ -1,0 +1,22 @@
+<div id="content">
+    <div>
+		<li>
+			<a href="/create_client/">Создать клиента</a>
+		</li>
+		<li>
+			<a href="/add_client/">Добавить клиента на пирожок</a>
+		</li>
+	</div>
+    <h1>Список клиентов</h1>
+    <div>
+
+        {% for item in objects_list %}
+        <li>
+            {{item.name}}
+            {% for pie in item.pies %}
+                {{pie.name}}
+            {% endfor %}
+        </li>
+        {% endfor %}
+    </div>
+</div>

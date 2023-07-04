@@ -2,12 +2,16 @@
 
 from datetime import date
 from my_framework.template_engine import render
+from patterns.behavioral_patterns import EmailNotifier, SmsNotifier, ListView, CreateView, BaseSerializer
 from patterns.сreational_patterns import Engine, Logger
 from patterns.structural_patterns import AppRoute, Debug
+# from patterns.behavioral_patterns import EmailNotifier, SmsNotifier, ListView, CreateView, BaseSerializer
 
 
 site = Engine()
 logger = Logger('main')
+email_notifier = EmailNotifier()
+sms_notifier = SmsNotifier()
 
 routes = {}  # Пустой словарь, который будет заполнять декоратор при открытии проекта
 
@@ -85,7 +89,12 @@ class CreatePie:
             if self.category_id != -1:
                 category = site.find_category_by_id(int(self.category_id))
 
-                pie = site.create_pie('closed', name, category)
+                pie = site.create_pie('closed', name, category)  # Создание нового пирожка
+
+                # Обратившись к пирожку и его наблюдателю добавить туда наблюдателей
+                pie.observers.append(email_notifier)
+                pie.observers.append(sms_notifier)
+
                 site.pies.append(pie)
 
             return '200 OK', render('pie_list.html',
@@ -166,3 +175,47 @@ class CopyPie:
                                     name=new_pie.category.name)
         except KeyError:
             return '200 OK', 'No pies have been added yet'
+
+
+@AppRoute(routes=routes, url='/client_list/')
+class ClientListView(ListView):
+    queryset = site.clients
+    template_name = 'client_list.html'
+
+
+@AppRoute(routes=routes, url='/create_client/')
+class ClientCreateView(CreateView):
+    template_name = 'create_client.html'
+
+    def create_obj(self, data: dict):
+        name = data['name']
+        name = site.decode_value(name)
+        new_obj = site.create_user('client', name)
+        site.clients.append(new_obj)
+
+
+@AppRoute(routes=routes, url='/add_client/')
+class AddClientByPieCreateView(CreateView):
+    template_name = 'add_client.html'
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['pies'] = site.pies
+        context['clients'] = site.clients
+        return context
+
+    def create_obj(self, data: dict):
+        pie_name = data['pie_name']
+        pie_name = site.decode_value(pie_name)
+        pie = site.get_pie(pie_name)
+        client_name = data['client_name']
+        client_name = site.decode_value(client_name)
+        client = site.get_client(client_name)
+        pie.add_client(client)
+
+
+@AppRoute(routes=routes, url='/api/')
+class PieApi:
+    @Debug(name='CourseApi')
+    def __call__(self, request):
+        return '200 OK', BaseSerializer(site.pies).save()

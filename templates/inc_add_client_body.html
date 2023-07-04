@@ -1,0 +1,24 @@
+<div id="content">
+    <div>
+		<li>
+			<a href="/client_list/">Список клиентов</a>
+		</li>
+		<li>
+			<a href="/create-client/">Создать клиента</a>
+		</li>
+	</div>
+    <h1>Добавление клиента на пирожок</h1>
+    <form method="post">
+        <select size="3" name="pie_name">
+            {% for item in pies %}
+            <option value="{{item.name}}">{{item.name}}</option>
+            {% endfor %}
+        </select>
+        <select size="3" name="client_name">
+            {% for item in clients %}
+            <option value="{{item.name}}">{{item.name}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Записать</button>
+    </form>
+</div>

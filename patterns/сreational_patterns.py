@@ -1,10 +1,16 @@
 from copy import deepcopy
 from quopri import decodestring
+from datetime import datetime
+from patterns.behavioral_patterns import Subject, FileWriter
+
+
+# from behavioral_patterns import FileWriter, Subject
 
 
 # Абстрактный пользователь
 class User:
-    pass
+    def __init__(self, name):
+        self.name = name
 
 
 # Пекарь
@@ -14,7 +20,9 @@ class Baker(User):
 
 # Покупатель
 class Client(User):
-    pass
+    def __init__(self, name):
+        self.pies = []
+        super().__init__(name)
 
 
 class UserFactory:  # Это не сама фабрика, это название класса
@@ -25,13 +33,14 @@ class UserFactory:  # Это не сама фабрика, это названи
 
     # Порождающий паттерн: Фабричный метод
     @classmethod
-    def create(cls, type_):
+    def create(cls, type_, name):
         """
         Создание объекта пользователя конкретной сущности
         :param type_: название
+        :param name: имя
         :return:
         """
-        return cls.types[type_]()
+        return cls.types[type_](name)
 
 
 # Порождающий паттерн Прототип
@@ -42,13 +51,25 @@ class PiePrototype:
         return deepcopy(self)
 
 
-class Pie(PiePrototype):
+class Pie(PiePrototype, Subject):
 
     def __init__(self, name, category):
         self.name = name
         self.category = category
         # У категории есть входящие в неё пирожки, т.е. мы вносим объект этого пирожка в список пирожков категории
         self.category.pies.append(self)
+        self.clients = []
+        super().__init__()
+
+    def __getitem__(self, item):
+        return self.clients[item]
+
+    def add_client(self, client: Client):
+        """Добавление нового клиента при создании объекта пирожка"""
+        self.clients.append(client)  # вносим в список
+        client.pies.append(self)
+        # Если он добавляется, то уведомить всех подписчиков
+        self.notify()
 
 
 # Пирожки открытые
@@ -59,21 +80,6 @@ class OpenPie(Pie):
 # Пирожки закрытые
 class ClosedPie(Pie):
     pass
-
-
-class PieFactory:
-    types = {
-        'open': OpenPie,
-        'closed': ClosedPie
-    }
-
-    # Порождающий паттерн: Фабричный метод
-    @classmethod
-    def create(cls, type_, name, category):
-        """
-        Создание объекта пирожок конкретной сущности
-        """
-        return cls.types[type_](name, category)
 
 
 # Категория
@@ -95,6 +101,21 @@ class Category:
         return result
 
 
+class PieFactory:
+    types = {
+        'open': OpenPie,
+        'closed': ClosedPie
+    }
+
+    # Порождающий паттерн: Фабричный метод
+    @classmethod
+    def create(cls, type_, name, category):
+        """
+        Создание объекта пирожок конкретной сущности
+        """
+        return cls.types[type_](name, category)
+
+
 # Движок - главный класс, где происходит создание всех объектов (основной интерфейс проекта)
 class Engine:
     def __init__(self):
@@ -104,9 +125,9 @@ class Engine:
         self.categories = []
 
     @staticmethod
-    def create_user(type_):
+    def create_user(type_, name):
         """Создание пользователей"""
-        return UserFactory.create(type_)
+        return UserFactory.create(type_, name)
 
     @staticmethod
     def create_category(name, category=None):
@@ -132,6 +153,12 @@ class Engine:
             if item.name == name:
                 return item
         return None
+
+    def get_client(self, name) -> Client:
+        """Получение клиента"""
+        for item in self.clients:
+            if item.name == name:
+                return item
 
     @staticmethod
     def decode_value(val):
@@ -164,10 +191,11 @@ class SingletonByName(type):
 
 class Logger(metaclass=SingletonByName):
 
-    def __init__(self, name):
+    def __init__(self, name, writer=FileWriter()):
         self.name = name
+        self.writer = writer
 
-    @staticmethod
-    def log(text):
-        """Вывод сообщения в терминал"""
-        print('log--->', text)
+    def log(self, text):
+        """Вывод сообщения в файл"""
+        text = f'log--> {datetime.now()}: {text}'
+        self.writer.write(text)
