@@ -2,8 +2,9 @@
 
 from datetime import date
 from my_framework.template_engine import render
+from patterns.architectural_system_pattern_unit_of_work import UnitOfWork
 from patterns.behavioral_patterns import EmailNotifier, SmsNotifier, ListView, CreateView, BaseSerializer
-from patterns.сreational_patterns import Engine, Logger
+from patterns.сreational_patterns import Engine, Logger, MapperRegistry
 from patterns.structural_patterns import AppRoute, Debug
 # from patterns.behavioral_patterns import EmailNotifier, SmsNotifier, ListView, CreateView, BaseSerializer
 
@@ -12,6 +13,8 @@ site = Engine()
 logger = Logger('main')
 email_notifier = EmailNotifier()
 sms_notifier = SmsNotifier()
+UnitOfWork.new_current()  # Новый поток для работы с БД
+UnitOfWork.get_current().set_mapper_registry(MapperRegistry)  # В текущем потоке связка с реестром
 
 routes = {}  # Пустой словарь, который будет заполнять декоратор при открытии проекта
 
@@ -179,8 +182,12 @@ class CopyPie:
 
 @AppRoute(routes=routes, url='/client_list/')
 class ClientListView(ListView):
-    queryset = site.clients
     template_name = 'client_list.html'
+
+    def get_queryset(self):
+        """Через наш реестр получает нужный mapper по названию таблицы"""
+        mapper = MapperRegistry.get_current_mapper('client')
+        return mapper.all()  # возвращает всё - список объектов модели
 
 
 @AppRoute(routes=routes, url='/create_client/')
@@ -191,7 +198,9 @@ class ClientCreateView(CreateView):
         name = data['name']
         name = site.decode_value(name)
         new_obj = site.create_user('client', name)
-        site.clients.append(new_obj)
+        site.clients.append(new_obj)  # добавление объекта в список
+        new_obj.mark_new()  # Помечаем, как новый
+        UnitOfWork.get_current().commit()  # Коммитим - данные пошли в БД
 
 
 @AppRoute(routes=routes, url='/add_client/')
